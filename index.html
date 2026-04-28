@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicPulse | Your Election Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #dc2626;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .step-active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .timeline-track {
+            background: linear-gradient(to right, #2563eb 0%, #e2e8f0 0%);
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .thinking {
+            animation: pulse-soft 1.5s infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200">
+                    <i class="fa-solid fa-building-columns text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">CivicPulse</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-blue-600 font-bold">Election Intelligence</p>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex gap-8 text-sm font-semibold">
+                <a href="#roadmap" class="hover:text-blue-600 transition-colors">Roadmap</a>
+                <a href="#timeline" class="hover:text-blue-600 transition-colors">Timeline</a>
+                <a href="#assistant" class="hover:text-blue-600 transition-colors">AI Assistant</a>
+            </nav>
+
+            <button class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all shadow-md">
+                Register to Vote
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        
+        <!-- Hero & Progress -->
+        <section class="mb-20 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold mb-6">2026 ELECTION CYCLE ACTIVE</span>
+                <h2 class="text-5xl font-bold leading-tight mb-6">Democracy is <span class="text-blue-600">Interactive.</span></h2>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                    Navigating the election process shouldn't feel like a chore. Use our interactive toolkit to understand your rights, track deadlines, and prepare for the ballot box.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#roadmap" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-200 hover:-translate-y-1 transition-all">Start My Journey</a>
+                    <button onclick="scrollToAssistant()" class="bg-white border border-slate-200 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition-all">Ask a Question</button>
+                </div>
+            </div>
+            <div class="glass-card rounded-[2rem] p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-10">
+                    <i class="fa-solid fa-check-to-slot text-9xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-6">Your Readiness Score</h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2 font-medium">
+                            <span>Profile Completion</span>
+                            <span id="progress-text">20%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-700" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <ul class="space-y-4" id="task-list">
+                        <li class="flex items-center gap-3 text-sm">
+                            <input type="checkbox" checked disabled class="w-5 h-5 accent-blue-600">
+                            <span class="text-slate-500 line-through">Explore CivicPulse Dashboard</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm">
+                            <input type="checkbox" onchange="updateProgress(this)" class="w-5 h-5 accent-blue-600 cursor-pointer">
+                            <span>Check Voter Eligibility</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm">
+                            <input type="checkbox" onchange="updateProgress(this)" class="w-5 h-5 accent-blue-600 cursor-pointer">
+                            <span>Find Polling Deadlines</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Roadmap -->
+        <section id="roadmap" class="mb-24">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold mb-2">The Voter's Roadmap</h3>
+                <p class="text-slate-500">Six steps to ensure your voice is heard correctly.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Step 1 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">1</div>
+                    <h4 class="text-xl font-bold mb-3">Eligibility</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Confirm you are a citizen, meet age requirements, and check residency rules in your specific district.</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">Rules by State <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">2</div>
+                    <h4 class="text-xl font-bold mb-3">Registration</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">The most critical step. Ensure you are on the voter rolls before the deadline (usually 30 days prior).</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">Register Online <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">3</div>
+                    <h4 class="text-xl font-bold mb-3">Research</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Look beyond the ads. Study non-partisan guides for candidates and local ballot measures.</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">View Sample Ballot <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">4</div>
+                    <h4 class="text-xl font-bold mb-3">Voting Method</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Decide between Mail-in, Early In-Person, or Election Day. Each has different deadlines.</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">Compare Options <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">5</div>
+                    <h4 class="text-xl font-bold mb-3">ID Requirements</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Does your state require a photo ID? Check now to avoid surprises at the polling station.</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">Check ID Laws <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="glass-card p-8 rounded-3xl hover:shadow-lg transition-all group border-b-4 border-b-slate-200 hover:border-b-blue-500">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">6</div>
+                    <h4 class="text-xl font-bold mb-3">Vote!</h4>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">Cast your ballot. Know your rights, like the right to vote if you're in line before polls close.</p>
+                    <button class="text-blue-600 font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">Poll Finder <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Timeline Simulator -->
+        <section id="timeline" class="mb-24 bg-slate-900 rounded-[3rem] p-12 text-white shadow-2xl overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                <svg width="100%" height="100%"><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern><rect width="100%" height="100%" fill="url(#grid)" /></svg>
+            </div>
+            
+            <div class="relative z-10">
+                <div class="max-w-2xl">
+                    <h3 class="text-4xl font-bold mb-4">Election Cycle Simulator</h3>
+                    <p class="text-slate-400 mb-10">Drag the slider to see how an election season unfolds from the first primary to the final certification.</p>
+                </div>
+
+                <div class="mb-12">
+                    <input type="range" min="1" max="100" value="1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500" id="timeline-slider" oninput="updateTimeline(this.value)">
+                    <div class="flex justify-between mt-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">
+                        <span>January</span>
+                        <span>April</span>
+                        <span>July</span>
+                        <span>October</span>
+                        <span>December</span>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8" id="timeline-content">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-white/10">
+                        <span class="text-blue-400 text-xs font-bold uppercase block mb-2">Phase 1</span>
+                        <h4 class="text-lg font-bold mb-2">Primaries & Caucuses</h4>
+                        <p class="text-sm text-slate-400">Political parties select their nominees through state-level contests.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-white/10 opacity-30">
+                        <span class="text-blue-400 text-xs font-bold uppercase block mb-2">Phase 2</span>
+                        <h4 class="text-lg font-bold mb-2">National Conventions</h4>
+                        <p class="text-sm text-slate-400">Official nominations are made and party platforms are finalized.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-white/10 opacity-30">
+                        <span class="text-blue-400 text-xs font-bold uppercase block mb-2">Phase 3</span>
+                        <h4 class="text-lg font-bold mb-2">General Election</h4>
+                        <p class="text-sm text-slate-400">The final nationwide vote held on the first Tuesday in November.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Assistant -->
+        <section id="assistant" class="mb-24">
+            <div class="max-w-4xl mx-auto glass-card rounded-[2.5rem] p-1 shadow-2xl border-blue-100 border-2">
+                <div class="flex flex-col h-[600px]">
+                    <!-- Chat Header -->
+                    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">CivicBot</h4>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">AI Assistant Online</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="clearChat()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-6">
+                        <div class="flex gap-3 max-w-[80%]">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-robot text-xs"></i>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed">
+                                Hello! I'm CivicBot. I can help you understand voter registration, election dates, or finding your polling place. What would you like to know today?
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="p-6 bg-white rounded-b-[2.5rem]">
+                        <form id="chat-form" class="relative">
+                            <input 
+                                type="text" 
+                                id="user-input" 
+                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                                placeholder="e.g., How do I register to vote in California?"
+                            >
+                            <button type="submit" class="absolute right-2 top-2 bottom-2 bg-blue-600 text-white px-5 rounded-xl hover:bg-blue-700 transition-all">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <button onclick="presetQuestion('What are the eligibility requirements?')" class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-200">Eligibility</button>
+                            <button onclick="presetQuestion('When is the 2026 election?')" class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-200">2026 Dates</button>
+                            <button onclick="presetQuestion('How does mail-in voting work?')" class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-200">Mail-in Voting</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-12">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-blue-600 p-2 rounded-xl text-white shadow-md">
+                        <i class="fa-solid fa-building-columns text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold">CivicPulse</h1>
+                </div>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Building a more informed electorate through technology and accessible information. We provide non-partisan educational resources for all citizens.
+                </p>
+            </div>
+            <div>
+                <h5 class="font-bold mb-6">Quick Links</h5>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a href="#" class="hover:text-blue-600 transition-colors">Voter Rights</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition-colors">Candidate Guides</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition-colors">Accessibility Support</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold mb-6">Stay Updated</h5>
+                <div class="flex gap-2">
+                    <input type="email" placeholder="Email address" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none w-full">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest font-bold text-slate-400">
+            <span>© 2026 CivicPulse Education. All rights reserved.</span>
+            <div class="flex gap-6">
+                <a href="#"><i class="fa-brands fa-twitter text-lg"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Progress Tracker Logic
+        let completedTasks = 1;
+        const totalTasks = 3;
+
+        function updateProgress(checkbox) {
+            if (checkbox.checked) completedTasks++;
+            else completedTasks--;
+
+            const percentage = Math.round((completedTasks / totalTasks) * 100);
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').innerText = percentage + '%';
+        }
+
+        // Timeline Simulator Logic
+        function updateTimeline(value) {
+            const container = document.getElementById('timeline-content');
+            const items = container.children;
+            
+            // Logic to highlight phases based on slider value
+            if (value < 33) {
+                setPhase(items, 0);
+            } else if (value < 66) {
+                setPhase(items, 1);
+            } else {
+                setPhase(items, 2);
+            }
+        }
+
+        function setPhase(items, index) {
+            for (let i = 0; i < items.length; i++) {
+                if (i === index) {
+                    items[i].classList.remove('opacity-30');
+                    items[i].classList.add('bg-blue-600/20', 'border-blue-500/50');
+                } else {
+                    items[i].classList.add('opacity-30');
+                    items[i].classList.remove('bg-blue-600/20', 'border-blue-500/50');
+                }
+            }
+        }
+
+        // AI Assistant Logic (Simulated for this demo with Exponential Backoff)
+        const apiKey = ""; // Provided at runtime
+        const chatWindow = document.getElementById('chat-window');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+
+        async function callGemini(query) {
+            const systemPrompt = "You are CivicBot, an expert on election processes, voter registration, and civic duties. Provide concise, non-partisan, and encouraging answers. If you don't know a specific state's local deadline, advise the user to check their Secretary of State's website.";
+            
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) throw new Error('API request failed');
+                    
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble processing that right now.";
+                } catch (error) {
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            return "I'm sorry, I'm currently unable to connect to my brain. Please try again later.";
+        }
+
+        function addMessage(text, isUser = false) {
+            const div = document.createElement('div');
+            div.className = isUser ? 'flex justify-end gap-3' : 'flex gap-3 max-w-[80%]';
+            
+            const contentClass = isUser 
+                ? 'bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none text-sm' 
+                : 'bg-slate-100 p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed';
+
+            div.innerHTML = isUser ? `
+                <div class="${contentClass}">${text}</div>
+            ` : `
+                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                </div>
+                <div class="${contentClass}">${text}</div>
+            `;
+            
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        chatForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            userInput.value = '';
+
+            // Thinking indicator
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'flex gap-3 thinking';
+            thinkingDiv.innerHTML = `
+                <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl rounded-tl-none text-xs text-slate-400">CivicBot is processing...</div>
+            `;
+            chatWindow.appendChild(thinkingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            const response = await callGemini(text);
+            chatWindow.removeChild(thinkingDiv);
+            addMessage(response);
+        };
+
+        function presetQuestion(q) {
+            userInput.value = q;
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+
+        function clearChat() {
+            chatWindow.innerHTML = `
+                <div class="flex gap-3 max-w-[80%]">
+                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed">
+                        Chat reset! How else can I assist you today?
+                    </div>
+                </div>
+            `;
+        }
+
+        function scrollToAssistant() {
+            document.getElementById('assistant').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
